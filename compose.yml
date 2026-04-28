@@ -1,25 +1,17 @@
 services:
-
-  pihole:
-    # docs: https://docs.pi-hole.net/docker/
-    container_name: pihole
-    image: pihole/pihole:latest
+  caddy:
+    container_name: caddy
+    image: caddy:latest
     ports:
-      # DNS Ports
-      - "53:53/tcp"
-      - "53:53/udp"
-      # Default HTTP Port
-      - "80:80/tcp"
-      # Default HTTPs Port
-      - "443:443/tcp"
-    environment:
-      # Set the appropiate timezone
-      TZ: 'America/Monterrey'
-      # If using Docker's default 'bridge' network setting the dns listening mode should be set to 'ALL'
-      FTLCONF_dns_listeningMode: 'ALL'
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
     volumes:
-      # For persisting Pihole's databases and common configuration file
-      - './etc-pihole:/etc/pihole'
-    cap_add:
-      - NET_ADMIN
-    restart: unless-stopped
+      - './conf:/etc/caddy'
+      - './site:/srv'
+      - 'caddy_data:/data'
+      - 'caddy_config:/config'
+
+volumes:
+  caddy_data:
+  caddy_config:

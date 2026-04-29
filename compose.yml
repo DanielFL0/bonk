@@ -1,0 +1,29 @@
+services:
+  pihole:
+    image: pihole/pihole:latest
+    network_mode: host
+    environment:
+      FTLCONF_webserver_api_password: ${PIHOLE_PASSWORD}
+      FTLCONF_dns_upstreams: '1.1.1.3;1.0.0.3'
+      FTLCONF_dns_listeningMode: 'bind'
+      FTLCONF_dns_interface: 'tailscale0'
+      FTLCONF_webserver_port: '${TAILNET_IP}:80'
+      TZ: 'America/New_York'
+    volumes:
+      - pihole_data:/etc/pihole
+      - pihole_dnsmasq:/etc/dnsmasq.d
+    restart: unless-stopped
+
+  portainer:
+    image: portainer/portainer-ce:lts
+    ports:
+      - "${TAILNET_IP}:9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: unless-stopped
+
+volumes:
+  pihole_data:
+  pihole_dnsmasq:
+  portainer_data:
